@@ -4,6 +4,7 @@ import com.github.matheuskraisfeld.domain.entity.Cliente;
 import com.github.matheuskraisfeld.domain.entity.ItemPedido;
 import com.github.matheuskraisfeld.domain.entity.Pedido;
 import com.github.matheuskraisfeld.domain.entity.Produto;
+import com.github.matheuskraisfeld.domain.enums.StatusPedido;
 import com.github.matheuskraisfeld.domain.repository.Clientes;
 import com.github.matheuskraisfeld.domain.repository.ItensPedido;
 import com.github.matheuskraisfeld.domain.repository.Pedidos;
@@ -15,10 +16,10 @@ import com.github.matheuskraisfeld.service.PedidoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -42,6 +43,7 @@ public class PedidoServiceImpl implements PedidoService {
         pedido.setTotal(dto.getTotal());
         pedido.setDataPedido(LocalDate.now());
         pedido.setCliente(cliente);
+        pedido.setStatus(StatusPedido.REALIZADO);
 
         List<ItemPedido> itensPedido = converterItens(pedido, dto.getItems());
         repository.save(pedido);
@@ -49,6 +51,11 @@ public class PedidoServiceImpl implements PedidoService {
         pedido.setItens(itensPedido);
         return pedido;
 
+    }
+
+    @Override
+    public Optional<Pedido> obterPedidoCompleto(Integer id) {
+        return repository.findByIdFetchItens(id);
     }
 
     private List<ItemPedido> converterItens(Pedido pedido, List<ItemPedidoDTO> itens){
