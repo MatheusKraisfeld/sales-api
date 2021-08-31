@@ -50,7 +50,12 @@ public class ClienteController {
 
     @DeleteMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable Integer id){
+    @ApiOperation("Excluir cliente")
+    @ApiResponses({
+            @ApiResponse(code = 204, message = "Cliente excluído com sucesso."),
+            @ApiResponse(code = 404, message = "Cliente não encontrado para o ID informado.")
+    })
+    public void delete(@PathVariable @ApiParam("Id do cliente") Integer id){
         clientes.findById(id)
                 .map(cliente -> {
                     clientes.delete(cliente);
@@ -62,7 +67,12 @@ public class ClienteController {
 
     @PutMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void update(@PathVariable Integer id,
+    @ApiOperation("Atualizar dados de um cliente")
+    @ApiResponses({
+            @ApiResponse(code = 204, message = "Cliente atualizpado."),
+            @ApiResponse(code = 404, message = "Cliente não encontrado para o ID informado.")
+    })
+    public void update(@PathVariable @ApiParam("Id do cliente") Integer id,
                        @RequestBody @Valid Cliente cliente){
         clientes
                 .findById(id)
@@ -75,6 +85,11 @@ public class ClienteController {
     }
 
     @GetMapping
+    @ApiOperation("Pesquisar cliente")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Cliente encontrado."),
+            @ApiResponse(code = 404, message = "Cliente não encontrado para o filtro informado.")
+    })
     public List<Cliente> find(Cliente filtro){
         ExampleMatcher matcher = ExampleMatcher
                                     .matching()

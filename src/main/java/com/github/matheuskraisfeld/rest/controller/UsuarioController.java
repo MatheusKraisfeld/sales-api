@@ -6,6 +6,9 @@ import com.github.matheuskraisfeld.rest.dto.CredenciaisDTO;
 import com.github.matheuskraisfeld.rest.dto.TokenDTO;
 import com.github.matheuskraisfeld.security.jwt.JwtService;
 import com.github.matheuskraisfeld.service.impl.UsuarioServiceImpl;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -28,6 +31,11 @@ public class UsuarioController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @ApiOperation("Salvar usuário")
+    @ApiResponses({
+            @ApiResponse(code = 201, message = "Usuário salvo com sucesso."),
+            @ApiResponse(code = 400, message = "Erro de validação.")
+    })
     public Usuario salvar(@RequestBody @Valid Usuario usuario){
         String senhaCriptografada = passwordEncoder.encode(usuario.getSenha());
         usuario.setSenha(senhaCriptografada);

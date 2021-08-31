@@ -8,6 +8,9 @@ import com.github.matheuskraisfeld.rest.dto.InformacoesItemPedidoDTO;
 import com.github.matheuskraisfeld.rest.dto.InformacoesPedidoDTO;
 import com.github.matheuskraisfeld.rest.dto.PedidoDTO;
 import com.github.matheuskraisfeld.service.PedidoService;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
@@ -33,12 +36,22 @@ public class PedidoController {
 
     @PostMapping
     @ResponseStatus(CREATED)
+    @ApiOperation("Salvar pedido")
+    @ApiResponses({
+            @ApiResponse(code = 201, message = "Pedido salvo com sucesso."),
+            @ApiResponse(code = 400, message = "Erro de validação.")
+    })
     public Integer save(@RequestBody @Valid PedidoDTO dto){
         Pedido pedido = service.salvar(dto);
         return pedido.getId();
     }
 
     @GetMapping("{id}")
+    @ApiOperation("Obter informações do pedido")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Pedido encontrado."),
+            @ApiResponse(code = 404, message = "Pedido não encontrado para o ID informado.")
+    })
     public InformacoesPedidoDTO getById(@PathVariable Integer id){
         return service
                 .obterPedidoCompleto(id)
@@ -48,6 +61,11 @@ public class PedidoController {
 
     @PatchMapping("{id}")
     @ResponseStatus(NO_CONTENT)
+    @ApiOperation("Atualiza status de um pedido")
+    @ApiResponses({
+            @ApiResponse(code = 204, message = "Status atualizado."),
+            @ApiResponse(code = 404, message = "Pedido não encontrado para o ID informado.")
+    })
     public void updateStatus(@PathVariable Integer id,
                              @RequestBody AtualizacaoStatusPedidoDTO dto){
 

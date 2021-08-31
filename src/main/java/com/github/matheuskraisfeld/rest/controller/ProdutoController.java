@@ -2,6 +2,10 @@ package com.github.matheuskraisfeld.rest.controller;
 
 import com.github.matheuskraisfeld.domain.entity.Produto;
 import com.github.matheuskraisfeld.domain.repository.Produtos;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.http.HttpStatus;
@@ -22,7 +26,12 @@ public class ProdutoController {
     }
 
     @GetMapping("{id}")
-    public Produto getProdutoById(@PathVariable Integer id){
+    @ApiOperation("Obter detalhes de um produto")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Produto encontrado."),
+            @ApiResponse(code = 404, message = "Produto não encontrado para o ID informado.")
+    })
+    public Produto getProdutoById(@PathVariable @ApiParam("Id do produto") Integer id){
         return produtos
                 .findById(id)
                 .orElseThrow(() -> new ResponseStatusException(
@@ -31,13 +40,23 @@ public class ProdutoController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @ApiOperation("Salvar produto")
+    @ApiResponses({
+            @ApiResponse(code = 201, message = "Produto salvo com sucesso."),
+            @ApiResponse(code = 400, message = "Erro de validação.")
+    })
     public Produto save(@RequestBody @Valid Produto produto){
         return produtos.save(produto);
     }
 
     @DeleteMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable Integer id){
+    @ApiOperation("Excluir produto")
+    @ApiResponses({
+            @ApiResponse(code = 204, message = "Produto excluído com sucesso."),
+            @ApiResponse(code = 404, message = "Produto não encontrado para o ID informado.")
+    })
+    public void delete(@PathVariable @ApiParam("Id do produto") Integer id){
         produtos
                 .findById(id)
                 .map(produto -> {
@@ -50,7 +69,12 @@ public class ProdutoController {
 
     @PutMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void update(@PathVariable Integer id,
+    @ApiOperation("Atualizar dados de um produto")
+    @ApiResponses({
+            @ApiResponse(code = 204, message = "Produto atualizado com sucesso."),
+            @ApiResponse(code = 404, message = "Produto não encontrado para o ID informado.")
+    })
+    public void update(@PathVariable @ApiParam("Id do produto") Integer id,
                        @RequestBody @Valid Produto produto){
         produtos
                 .findById(id)
@@ -64,6 +88,11 @@ public class ProdutoController {
     }
 
     @GetMapping
+    @ApiOperation("Pesquisar produto")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Produto encontrado."),
+            @ApiResponse(code = 404, message = "Produto não encontrado para o filtro informado.")
+    })
     public List<Produto> find(Produto filtro){
         ExampleMatcher matcher = ExampleMatcher
                                     .matching()
