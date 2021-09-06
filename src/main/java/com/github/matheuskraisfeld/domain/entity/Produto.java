@@ -7,6 +7,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
@@ -26,4 +27,5 @@ public class Produto {
     @Column(name = "preco_unitario")
     @NotNull(message = "{campo.preco.obrigatorio}")
     private BigDecimal preco;
+
 }

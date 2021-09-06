@@ -23,7 +23,10 @@ public class UsuarioServiceImpl implements UserDetailsService {
 
     @Transactional
     public Usuario salvar(Usuario usuario){
-        return usuarioRepository.save(usuario);
+        if(usuario.getLogin() != null && usuario.getSenha() != null){
+            return usuarioRepository.save(usuario);
+        }
+        throw new IllegalArgumentException();
     }
 
     public UserDetails autenticar(Usuario usuario){
