@@ -3,7 +3,7 @@ package com.github.matheuskraisfeld.service;
 import com.github.matheuskraisfeld.domain.entity.Usuario;
 import com.github.matheuskraisfeld.domain.repository.UsuarioRepository;
 import com.github.matheuskraisfeld.service.impl.UsuarioServiceImpl;
-import org.junit.jupiter.api.Assertions;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,6 +13,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -51,14 +53,28 @@ public class UsuarioServiceTest {
     }
 
     @Test
-    @DisplayName("Deve retornar erro de campos obrigatorios")
+    @DisplayName("Deve retornar exception devido a campos obrigatórios")
     public void saveUsuarioEmptyTest() throws Exception{
 
-        Assertions.assertThrows(
-                IllegalArgumentException.class,
-                () -> service.salvar(new Usuario())
-                );
+        Usuario usuario = new Usuario();
 
+        Throwable exception = Assertions.catchThrowable(() -> service.salvar(usuario));
+
+        assertThat(exception)
+                .isInstanceOf(IllegalArgumentException.class);
+
+        Mockito.verify(repository, Mockito.never()).save(usuario);
+
+    }
+
+    @Test
+    @DisplayName("Deve validar usuario")
+    public void authTest() throws Exception{
+        UserDetails details = User.builder()
+                .username("root")
+                .password("root")
+                .roles(new String[]{"ADMIN", "USER"})
+                .build();
     }
 
 }
